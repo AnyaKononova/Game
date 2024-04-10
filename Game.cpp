@@ -14,38 +14,31 @@ void drawHorizontalLine(int width) {
     std::cout << "+" << std::endl;
 }
 
-void drawVerticalLine(int width) {
+void drawVerticalLine(int width, vector<vector<int>>& grid, int row) {
     std::cout << "|";
-    for (int i = 0; i < width; ++i) {
-        std::cout << " ";
+    for (int j = 0; j < width; ++j) {
+        if (grid[row][j] == 1) {
+            std::cout << "*";
+        }
+        else {
+            std::cout << " ";
+        }
     }
     std::cout << "|" << std::endl;
 }
 
-void frame(int width, int height) {
+void frame(int width, int height, vector<vector<int>>& grid) {
     drawHorizontalLine(width);
     for (int i = 0; i < height; ++i) {
-        drawVerticalLine(width);
+        drawVerticalLine(width, grid, i);
     }
     drawHorizontalLine(width);
 }
 
-void print(vector<vector<int>> grid) {
+void print(vector<vector<int>> grid, int iteration) {
     cout << "\x1B[2J\x1B[H";
-    frame(grid[0].size(), grid.size());
-    for (int i = 0; i < grid.size(); i++) {
-        cout << "|";
-        for (int j = 0; j < grid[i].size(); j++) {
-            if (grid[i][j] == 1) {
-                cout << "■ ";
-            }
-            else {
-                cout << "  ";
-            }
-        }
-        cout << "|" << endl;
-    }
-    frame(grid[0].size(), grid.size());
+    cout << "Iteration" << iteration << endl;
+    frame(grid[0].size(), grid.size(), grid);
 }
 
 int main()
@@ -59,7 +52,8 @@ int main()
         }
     }
 
-    print(grid);
+    int iteration = 1;
+    print(grid, iteration);
     this_thread::sleep_for(chrono::seconds(3));
 
     while (true) {
@@ -98,9 +92,10 @@ int main()
 
         auto end_time = chrono::steady_clock::now();
         auto elapsed_ns = chrono::duration_cast<chrono::nanoseconds>(end_time - begin_time);
-        print(grid);
+        print(grid, ++iteration);
         cout << elapsed_ns.count() << "ns" << endl;
         this_thread::sleep_for(chrono::milliseconds(100));
     }
     return 0;
 }
+
